@@ -19,7 +19,7 @@
 		})
 		];
       };});
-      rootOfShell = "/home/juanc/projects/bdl/bitcoin";
+      rootOfShell = "./";
     in
     {
       devShells = forEachSupportedSystem ({ pkgs }:
