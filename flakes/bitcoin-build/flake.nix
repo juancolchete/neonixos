@@ -56,7 +56,7 @@
               fftwFloat
 	      pkgconf
 	      pin-boost.boost173.dev
-              sqlite
+              sqlite.dev
               libevent.dev
               miniupnpc
 	      libnatpmp
