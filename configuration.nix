@@ -114,6 +114,7 @@ in
 	cmake
         postman
         easyeffects
+        foundry
     ];
   };
   
