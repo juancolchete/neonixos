@@ -2,12 +2,17 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ config, pkgs,options, ... }:
 
+let
+home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/release-25.05.tar.gz";
+vars = import ./env.nix;
+in
 {
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
+      (import "${home-manager}/nixos")
     ];
 
   # Bootloader.
@@ -17,14 +22,23 @@
   services.xserver.videoDrivers = [ "nvidia" ];
   hardware.nvidia.open = true;
   networking.hostName = "nixos"; # Define your hostname.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+  networking.timeServers = options.networking.timeServers.default ++ [ "ntp.ubuntu.com" ];   
+# networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
+  
+
   # Enable networking
   networking.networkmanager.enable = true;
+  # Docker config
+  virtualisation.docker.enable = true;
+  virtualisation.docker.rootless = {
+    enable = true;
+    setSocketVariable = true;
+  };
 
   # Set your time zone.
   time.timeZone = "America/Sao_Paulo";
@@ -75,6 +89,7 @@
     # no need to redefine it in your config for now)
     #media-session.enable = true;
   };
+  environment.variables.GTK_THEME = "Adwaita:dark";
 
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
@@ -83,13 +98,33 @@
   users.users.juanc = {
     isNormalUser = true;
     description = "Juan Colchete";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "docker"];
     packages = with pkgs; [
     	vim
         git
+        obs-studio
+        keepassxc
+        discord
+        vscodium
+	vivaldi
+	ffmpeg
+        vlc
+        libreoffice
+	spotify
+	cmake
+        postman
+        easyeffects
     ];
   };
-
+  
+  networking.firewall.allowedTCPPorts = [ 1935 8080 ];
+  networking.firewall.allowedUDPPorts = [ 1935 8080 ];
+  nix.settings.trusted-users = [ "root" "juanc" ];
+  networking.firewall = {
+    enable = true;
+    checkReversePath = "loose";
+    trustedInterfaces = [ "docker0" ];  
+  };
   # Install firefox.
   programs.firefox.enable = true;
 
@@ -101,6 +136,8 @@
   environment.systemPackages = with pkgs; [
   #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
   #  wget
+     devenv
+     direnv
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -129,5 +166,19 @@
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "25.05"; # Did you read the comment?
+  home-manager.users.juanc = {
+    programs.git = {
+     enable = true;
+     userName = vars.userName;
+     userEmail = vars.userEmail;
+   };
+   programs.obs-studio = {
+     enable = true;
+     plugins = with pkgs.obs-studio-plugins; [
+      obs-backgroundremoval
+     ];
+   };
+   home.stateVersion = "25.05";
+  };
 
 }
