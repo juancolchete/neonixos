@@ -115,6 +115,8 @@ in
         postman
         easyeffects
         foundry
+        neovim
+	lunarvim
     ];
   };
   
