@@ -119,7 +119,7 @@ in
 	lunarvim
     ];
   };
-  
+  networking.wireguard.enable = true;
   networking.firewall.allowedTCPPorts = [ 1935 8080 ];
   networking.firewall.allowedUDPPorts = [ 1935 8080 ];
   nix.settings.trusted-users = [ "root" "juanc" ];
