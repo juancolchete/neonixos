@@ -120,6 +120,9 @@ in
     ];
   };
   networking.wireguard.enable = true;
+  networking.wg-quick.interfaces = {
+    wg0 = vars.wg0; 
+  };
   networking.firewall.allowedTCPPorts = [ 1935 8080 ];
   networking.firewall.allowedUDPPorts = [ 1935 8080 ];
   nix.settings.trusted-users = [ "root" "juanc" ];
