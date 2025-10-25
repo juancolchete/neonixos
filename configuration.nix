@@ -116,8 +116,20 @@ in
         easyeffects
         foundry
         neovim
-	    lunarvim
         telegram-desktop
+	lunarvim
+        fish
+        nerd-fonts.fira-code
+        nerd-fonts._0xproto
+        nerd-fonts.droid-sans-mono
+        nerd-fonts.meslo-lg
+        nodejs_22
+	lazygit
+        xsel
+        xclip
+        alacritty
+        kitty
+        solc-select
     ];
   };
   networking.wireguard.enable = true;
