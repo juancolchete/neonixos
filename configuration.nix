@@ -106,17 +106,18 @@ in
         keepassxc
         discord
         vscodium
-	vivaldi
-	ffmpeg
+	    vivaldi
+	    ffmpeg
         vlc
         libreoffice
-	spotify
-	cmake
+     	spotify
+	    cmake
         postman
         easyeffects
         foundry
         neovim
-	lunarvim
+	    lunarvim
+        telegram-desktop
     ];
   };
   networking.wireguard.enable = true;
