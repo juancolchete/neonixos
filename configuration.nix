@@ -130,6 +130,13 @@ in
         alacritty
         kitty
         solc-select
+        prismlauncher
+        zulu24
+        ngrok
+	bitcoin
+        brave
+        kdePackages.kdenlive
+        qgis
     ];
   };
   networking.wireguard.enable = true;
