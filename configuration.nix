@@ -137,6 +137,7 @@ in
         brave
         kdePackages.kdenlive
         qgis
+	appimage-run
     ];
   };
   networking.wireguard.enable = true;
@@ -206,5 +207,5 @@ in
    };
    home.stateVersion = "25.05";
   };
-
+programs.nix-ld.enable = true;
 }
