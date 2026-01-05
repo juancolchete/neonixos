@@ -21,7 +21,6 @@ fi
 if [ ! -f /etc/nixos/.env ]; then
   gio copy smb://$server/$share/keys/envs/.env /etc/nixos/.env
 fi
-curl https://raw.githubusercontent.com/juancolchete/nixos/refs/heads/main/configuration.nix -o /etc/nixos/configuration.nix 
 sudo nix-channel --add https://nixos.org/channels/nixos-unstable nixos-unstable
 sudo nix-channel --update 
 sudo nixos-rebuild switch
