@@ -207,5 +207,9 @@ in
    };
    home.stateVersion = "25.05";
   };
-programs.nix-ld.enable = true;
+  programs.gnupg.agent = {
+  enable = true;
+  pinentryPackage = pkgs.pinentry-curses; # Use 'pkgs.pinentry-qt' or 'pkgs.pinentry-gnome3' for GUI
+};
+  programs.nix-ld.enable = true;
 }
