@@ -5,7 +5,7 @@
 { config, pkgs,options, ... }:
 
 let
-home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/release-25.05.tar.gz";
+home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/release-25.11.tar.gz";
 vars = import ./env.nix;
 in
 {
@@ -23,7 +23,7 @@ in
   hardware.nvidia.open = true;
   networking.hostName = "nixos"; # Define your hostname.
   networking.timeServers = options.networking.timeServers.default ++ [ "ntp.ubuntu.com" ];   
-# networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
@@ -34,7 +34,13 @@ in
   # Enable networking
   networking.networkmanager.enable = true;
   # Docker config
-  virtualisation.docker.enable = true;
+  virtualisation.docker = {
+    enable = true;
+    # Add this line to force Google DNS inside containers
+    daemon.settings = {
+     dns = [ "8.8.8.8" "8.8.4.4" ];
+    };
+  };  
   virtualisation.docker.rootless = {
     enable = true;
     setSocketVariable = true;
@@ -106,38 +112,39 @@ in
         keepassxc
         discord
         vscodium
-	    vivaldi
-	    ffmpeg
+	      vivaldi
+	      ffmpeg
         vlc
         libreoffice
-     	spotify
-	    cmake
+     	  spotify
+	      cmake
         postman
         easyeffects
         foundry
         neovim
         telegram-desktop
-	lunarvim
+	      lunarvim
         fish
         nerd-fonts.fira-code
         nerd-fonts._0xproto
         nerd-fonts.droid-sans-mono
         nerd-fonts.meslo-lg
         nodejs_22
-	lazygit
+	      lazygit
         xsel
         xclip
         alacritty
         kitty
         solc-select
         prismlauncher
-        zulu24
         ngrok
-	bitcoin
+	      bitcoin
         brave
         kdePackages.kdenlive
         qgis
-	appimage-run
+	      appimage-run
+	      docker
+        javaPackages.compiler.temurin-bin.jre-25
     ];
   };
   networking.wireguard.enable = true;
@@ -192,7 +199,8 @@ in
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "25.05"; # Did you read the comment?
+  
+  system.stateVersion = "25.11"; # Did you read the comment?
   home-manager.users.juanc = {
     programs.git = {
      enable = true;
@@ -205,7 +213,7 @@ in
       obs-backgroundremoval
      ];
    };
-   home.stateVersion = "25.05";
+   home.stateVersion = "25.11";
   };
   programs.gnupg.agent = {
   enable = true;
