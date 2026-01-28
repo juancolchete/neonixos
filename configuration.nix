@@ -136,7 +136,6 @@ in
         alacritty
         kitty
         solc-select
-        prismlauncher
         ngrok
 	      bitcoin
         brave
