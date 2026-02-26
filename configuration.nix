@@ -2,18 +2,18 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs,options, ... }:
+{ config, pkgs,options,nixified-ai, ... }:
 
 let
-home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/release-25.11.tar.gz";
-vars = import ./env.nix;
+vars = import /etc/nixos/env.nix;
 in
 {
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      (import "${home-manager}/nixos")
     ];
+
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -30,7 +30,26 @@ in
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
   
+services.comfyui = {
+    enable = true;
+    package = nixified-ai.packages.${pkgs.system}.comfyui-nvidia;
+    home = "/home/juanc/comfyui-data"; 
+    extraFlags = [
+      "--lowvram"
+      "--enable-manager"
+    ];
+  };
 
+  systemd.services.comfyui.serviceConfig = {
+    User = pkgs.lib.mkForce "juanc";
+    Group = pkgs.lib.mkForce "users";
+    ProtectHome = pkgs.lib.mkForce false;
+  };
+
+
+  # Recommended: Add the binary cache to avoid long compile times
+  nix.settings.trusted-substituters = [ "https://ai.cachix.org" ];
+  nix.settings.trusted-public-keys = [ "ai.cachix.org-1:N9dzRK+alWwoKXQlnn0H6aUx0lU/mspIoz8hMvGvbbc=" ];
   # Enable networking
   networking.networkmanager.enable = true;
   # Docker config
