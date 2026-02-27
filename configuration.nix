@@ -37,6 +37,7 @@ services.comfyui = {
     extraFlags = [
       "--lowvram"
       "--enable-manager"
+      "--base-directory=/home/juanc/comfyui-data"
     ];
   };
 
@@ -163,6 +164,7 @@ services.comfyui = {
 	      appimage-run
 	      docker
         javaPackages.compiler.temurin-bin.jre-25
+        nvitop
     ];
   };
   networking.wireguard.enable = true;
