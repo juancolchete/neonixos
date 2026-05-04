@@ -2,18 +2,18 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs,options,nixified-ai, ... }:
+{ config, pkgs,options, ... }:
 
 let
-vars = import /etc/nixos/env.nix;
+home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/release-25.11.tar.gz";
+vars = import ./env.nix;
 in
 {
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
+      (import "${home-manager}/nixos")
     ];
-
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -22,35 +22,31 @@ in
   services.xserver.videoDrivers = [ "nvidia" ];
   hardware.nvidia.open = true;
   networking.hostName = "nixos"; # Define your hostname.
-  networking.timeServers = options.networking.timeServers.default ++ [ "ntp.ubuntu.com" ];   
+  services.pgadmin = {
+    enable = true;
+    initialEmail = "juancolchete@gmail.com"; # Must be a valid email format
+    initialPasswordFile = "/etc/pgadmin/password";
+  };
+
+  services.postgresql = {
+    package = pkgs.postgresql_16; # This exact line must be present
+  };
+
+  # Ensure the user exists (usually handled by the service, but good to check)
+  users.users.pgadmin = {
+    isSystemUser = true;
+    group = "pgadmin";
+  };
+  users.groups.pgadmin = {};
+  networking.timeServers = options.networking.timeServers.default ++ [ "ntp.ubuntu.com" ];  
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
-  
-services.comfyui = {
-    enable = true;
-    package = nixified-ai.packages.${pkgs.system}.comfyui-nvidia;
-    home = "/home/juanc/comfyui-data"; 
-    extraFlags = [
-      "--lowvram"
-      "--enable-manager"
-      "--base-directory=/home/juanc/comfyui-data"
-    ];
-  };
+ 
 
-  systemd.services.comfyui.serviceConfig = {
-    User = pkgs.lib.mkForce "juanc";
-    Group = pkgs.lib.mkForce "users";
-    ProtectHome = pkgs.lib.mkForce false;
-  };
-
-
-  # Recommended: Add the binary cache to avoid long compile times
-  nix.settings.trusted-substituters = [ "https://ai.cachix.org" ];
-  nix.settings.trusted-public-keys = [ "ai.cachix.org-1:N9dzRK+alWwoKXQlnn0H6aUx0lU/mspIoz8hMvGvbbc=" ];
   # Enable networking
   networking.networkmanager.enable = true;
   # Docker config
@@ -60,7 +56,7 @@ services.comfyui = {
     daemon.settings = {
      dns = [ "8.8.8.8" "8.8.4.4" ];
     };
-  };  
+  }; 
   virtualisation.docker.rootless = {
     enable = true;
     setSocketVariable = true;
@@ -164,7 +160,19 @@ services.comfyui = {
 	      appimage-run
 	      docker
         javaPackages.compiler.temurin-bin.jre-25
-        nvitop
+        ladybird
+        librewolf
+        kdePackages.falkon
+        (google-chrome.override {
+          commandLineArgs = [
+            "--disable-gpu-compositing"
+            "--ignore-gpu-blocklist"
+            "--enable-zero-copy"
+          ];
+        })
+        chromium
+        pgadmin4
+        signal-desktop
     ];
   };
   networking.wireguard.enable = true;
@@ -177,7 +185,7 @@ services.comfyui = {
   networking.firewall = {
     enable = true;
     checkReversePath = "loose";
-    trustedInterfaces = [ "docker0" ];  
+    trustedInterfaces = [ "docker0" ]; 
   };
   # Install firefox.
   programs.firefox.enable = true;
@@ -219,7 +227,6 @@ services.comfyui = {
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  
   system.stateVersion = "25.11"; # Did you read the comment?
   home-manager.users.juanc = {
     programs.git = {
