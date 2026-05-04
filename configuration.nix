@@ -57,10 +57,6 @@ in
      dns = [ "8.8.8.8" "8.8.4.4" ];
     };
   }; 
-  virtualisation.docker.rootless = {
-    enable = true;
-    setSocketVariable = true;
-  };
 
   # Set your time zone.
   time.timeZone = "America/Sao_Paulo";
