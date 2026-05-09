@@ -169,6 +169,8 @@ in
         chromium
         pgadmin4
         signal-desktop
+        git-lfs
+        code-cursor
     ];
   };
   networking.wireguard.enable = true;
