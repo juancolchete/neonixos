@@ -1,12 +1,14 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
-
-{ config, pkgs,options, ... }:
+{ config, pkgs, options, ... }:
 
 let
-home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/release-25.11.tar.gz";
-vars = import ./env.nix;
+  home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/release-25.11.tar.gz";
+  vars = import ./env.nix;
+  
+  # Import the unstable channel
+  unstable = import (builtins.fetchTarball "https://github.com/NixOS/nixpkgs/archive/nixos-unstable.tar.gz") {
+    # This ensures your unstable packages respect your nixpkgs config (like allowUnfree = true)
+    config = config.nixpkgs.config; 
+  };
 in
 {
   imports =
@@ -145,6 +147,7 @@ in
 	      lazygit
         xsel
         xclip
+        wl-clipboard
         alacritty
         kitty
         solc-select
@@ -170,7 +173,8 @@ in
         pgadmin4
         signal-desktop
         git-lfs
-        code-cursor
+        unstable.code-cursor
+        gnomeExtensions.clipboard-history
     ];
   };
   networking.wireguard.enable = true;
@@ -198,6 +202,7 @@ in
   #  wget
      devenv
      direnv
+     gnome-extension-manager
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -239,6 +244,14 @@ in
      ];
    };
    home.stateVersion = "25.11";
+   dconf.settings = {
+     "org/gnome/shell" = {
+     disable-user-extensions = false;
+       enabled-extensions = [
+         "clipboard-history@alexsaveau.dev"
+       ];
+     };
+   };
   };
   programs.gnupg.agent = {
   enable = true;
