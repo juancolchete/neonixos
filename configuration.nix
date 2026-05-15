@@ -24,22 +24,12 @@ in
   services.xserver.videoDrivers = [ "nvidia" ];
   hardware.nvidia.open = true;
   networking.hostName = "nixos"; # Define your hostname.
-  services.pgadmin = {
-    enable = true;
-    initialEmail = "juancolchete@gmail.com"; # Must be a valid email format
-    initialPasswordFile = "/etc/pgadmin/password";
-  };
 
   services.postgresql = {
     package = pkgs.postgresql_16; # This exact line must be present
   };
 
   # Ensure the user exists (usually handled by the service, but good to check)
-  users.users.pgadmin = {
-    isSystemUser = true;
-    group = "pgadmin";
-  };
-  users.groups.pgadmin = {};
   networking.timeServers = options.networking.timeServers.default ++ [ "ntp.ubuntu.com" ];  
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
@@ -170,11 +160,9 @@ in
           ];
         })
         chromium
-        pgadmin4
         signal-desktop
         git-lfs
         unstable.code-cursor
-        gnomeExtensions.clipboard-history
     ];
   };
   networking.wireguard.enable = true;
@@ -203,6 +191,7 @@ in
      devenv
      direnv
      gnome-extension-manager
+     gnomeExtensions.clipboard-history
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
