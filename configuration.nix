@@ -164,6 +164,7 @@ in
         git-lfs
         unstable.code-cursor
         qbittorrent
+        bottles
     ];
   };
   networking.wireguard.enable = true;
