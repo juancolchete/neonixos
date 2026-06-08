@@ -163,6 +163,7 @@ in
         signal-desktop
         git-lfs
         unstable.code-cursor
+        qbittorrent
     ];
   };
   networking.wireguard.enable = true;
